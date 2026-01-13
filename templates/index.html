@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-commerce Sales Insights</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>E-commerce Sales Insights Dashboard</h1>
+
+    <h2>Key Metrics</h2>
+    <p>Total Sales: <span id="totalSales">Loading...</span></p>
+    <p>Total Profit: <span id="totalProfit">Loading...</span></p>
+    <p>Total Orders: <span id="totalOrders">Loading...</span></p>
+    <p>Average Order Value: <span id="avgOrderValue">Loading...</span></p>
+
+    <h2>Monthly Sales Chart</h2>
+    <canvas id="salesChart" width="600" height="400"></canvas>
+
+<script>
+/* Fetch KPIs */
+fetch('/api/kpis')
+.then(response => response.json())
+.then(data => {
+    document.getElementById('totalSales').innerText = data.total_sales;
+    document.getElementById('totalProfit').innerText = data.total_profit;
+    document.getElementById('totalOrders').innerText = data.total_orders;
+    document.getElementById('avgOrderValue').innerText = data.average_order_value;
+});
+
+/* Fetch Monthly Sales */
+fetch('/api/sales_by_month')
+.then(response => response.json())
+.then(data => {
+    const labels = Object.keys(data);
+    const values = Object.values(data);
+
+    new Chart(document.getElementById('salesChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Monthly Sales',
+                data: values,
+                fill: false,
+                tension: 0.1
+            }]
+        }
+    });
+});
+</script>
+
+</body>
+</html>
+
